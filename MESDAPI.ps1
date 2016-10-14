@@ -30,12 +30,14 @@ function Get-MECategories
         
         Foreach ($CatKey in $CategoryHash.Keys)
         {
-            Get-MESubcategories -CatKey $CatKey
+            #Insert Subcategories into the Category hashtable keyed on the parent Category ID
+			$CategoryHash[$CatKey][1] = Get-MESubcategories -CatKey $CatKey
         }
     }
     else
     {
-        $CategoryHash = Get-MECategories
+        #Variable not populated
+		$CategoryHash = Get-MECategories
     }
 
 	return $CategoryHash
@@ -64,8 +66,7 @@ function Get-MESubcategories
             $SubCategoryHash[$SubCatKey][1] = Get-MEItems -SubCatKey $SubCatKey
         }
 
-        #Insert Subcategories into the Category hashtable keyed on the parent Category ID
-        $CategoryHash[$CatKey][1] = $SubCategoryHash
+        return $SubCategoryHash
     }
 }
 
@@ -86,6 +87,7 @@ function Get-MEItems
 	    $Items | Foreach {$ItemHash[$_.parameter.value[0]] = $_.parameter.value[1]}
         return $ItemHash
     }
+	return $ItemHash
 }
 
 function Get-MEStatuses
