@@ -1,5 +1,11 @@
-$MEBaseURL = ''
-$MEAPIKey = ''
+If (Test-Path -Path .\key.txt)
+{
+	$MEBaseURL = @(Get-Content -Path .\key.txt)[0]
+	$MEAPIKey = @(Get-Content -Path .\key.txt)[1]
+}
+else {
+	Write-Error -Message 'You need your ME SD URL and API key in key.txt, one per line.'
+}
 
 $CategoryHash = @{}
 $StatusHash = @{}
