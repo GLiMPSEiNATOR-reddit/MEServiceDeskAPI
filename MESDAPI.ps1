@@ -25,13 +25,16 @@ function Get-MECategories
 		$ModuleURL = $MEBaseURL + "admin/category/"
 		$Params = @{OPERATION_NAME='GET_ALL';TECHNICIAN_KEY=$MEAPIKey}
 		[xml]$Categories = (Invoke-WebRequest -Method Post -Uri $ModuleURL -Body $Params).Content
-		#Insert ID/Name pairs with a hashtable for the subcategories
-		$Categories.API.response.operation.Details.record | Foreach {$CategoryHash[$_.parameter.value[0]] = @($_.parameter.value[1], @{})}
+		
+        #Insert ID/Name pairs
+
+		$Categories.API.response.operation.Details.record | Foreach {$CategoryHash[$_.parameter.value[0]] = $_.parameter.value[1]}
+        
 	
 		Foreach ($CatKey in $CategoryHash.Keys)
 		{
 			#Insert Subcategories into the Category hashtable keyed on the parent Category ID
-			$CategoryHash[$CatKey][1] = Get-MESubcategories -CatKey $CatKey
+            $CategoryHash.Add('Subcat', (Get-MESubcategories -CatKey $CatKey))
 		}
 	}
 	else
@@ -59,11 +62,11 @@ function Get-MESubcategories
 	$SubCategoryHash = @{}
 	If ($Subcategories -ne $null)
 	{
-		$Subcategories | Foreach {$SubCategoryHash[$_.parameter.value[0]] = @($_.parameter.value[1], @{})}
+		$Subcategories | Foreach {$SubCategoryHash[$_.parameter.value[0]] = $_.parameter.value[1]}
 		
 		Foreach ($SubCatKey in $SubCategoryHash.Keys)
 		{
-			$SubCategoryHash[$SubCatKey][1] = Get-MEItems -SubCatKey $SubCatKey
+			#$SubCategoryHash[$SubCatKey][1] = Get-MEItems -SubCatKey $SubCatKey
 		}
 	}
 	
