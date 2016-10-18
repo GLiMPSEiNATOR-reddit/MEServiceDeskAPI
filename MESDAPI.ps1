@@ -174,9 +174,9 @@ function Get-MESupportGroups
 	$SupportGroupXML = @"
 	<?xml version="1.0" encoding="UTF-8"?>
 	<operation name="GET_ALL">
-	<Details>
-	<siteName></siteName>
-	</Details>
+	    <Details>
+	        <siteName></siteName>
+	    </Details>
 	</operation>
 "@
 	$ModuleURL = $MEBaseURL + "admin/supportgroup/"
@@ -214,18 +214,18 @@ function Get-MERequests
 
 	$GetReqsXML = @"
 	<Details>
-	<parameter>
-	<name>from</name>
-	<value>$LowerLimit</value>
-	</parameter>
-	<parameter>
-	<name>limit</name>
-	<value>$UpperLimit</value>
-	</parameter>
-	<parameter>
-	<name>filterby</name>
-	<value>$RequestFilter</value>
-	</parameter>
+	    <parameter>
+	        <name>from</name>
+	        <value>$LowerLimit</value>
+	    </parameter>
+	    <parameter>
+	        <name>limit</name>
+	        <value>$UpperLimit</value>
+	    </parameter>
+	    <parameter>
+	        <name>filterby</name>
+	        <value>$RequestFilter</value>
+	    </parameter>
 	</Details>
 "@
 
@@ -257,16 +257,16 @@ function New-METicket
 
 	$NewTicketXML = @"
 	<Operation>
-	<Details>
-	<requester>$Requester</requester>
-	<subject>$Subject</subject>
-	<description>$Description</description>
-	<requesttemplate>Default Request</requesttemplate>
-	<group>$Group</group>
-	<priority>$Priority</priority>
-	<status>$Status</status>
-	<service>$Service</service>
-	</Details>
+	    <Details>
+	        <requester>$Requester</requester>
+	        <subject>$Subject</subject>
+	        <description>$Description</description>
+	        <requesttemplate>Default Request</requesttemplate>
+	        <group>$Group</group>
+	        <priority>$Priority</priority>
+	        <status>$Status</status>
+	        <service>$Service</service>
+	    </Details>
 	</Operation>
 "@
 	$ModuleURL = $MEBaseURL + "request/"
