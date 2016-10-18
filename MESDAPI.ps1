@@ -271,3 +271,5 @@ function New-METicket
 	(Invoke-RestMethod -Method Post -Uri $ModuleURL -Body $Params).operation.result
 	$ModuleURL = ''
 }
+
+Get-MECategories
