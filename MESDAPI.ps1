@@ -6,7 +6,10 @@ If (Test-Path -Path .\key.txt)
 else {
 	Write-Error -Message 'You need your ME SD URL and API key in key.txt, one per line.'
 }
-
+<#
+This is how the Category > Subcategory > Item structure ends up.
+$CategoryHash['4802']['Subcategories']['9942']['Items']['11142']
+#>
 $CategoryHash = @{}
 $StatusHash = @{}
 $LevelHash = @{}
@@ -24,22 +27,15 @@ function Get-MECategories
 	{  	
 		$ModuleURL = $MEBaseURL + "admin/category/"
 		$Params = @{OPERATION_NAME='GET_ALL';TECHNICIAN_KEY=$MEAPIKey}
-		[xml]$Categories = (Invoke-WebRequest -Method Post -Uri $ModuleURL -Body $Params).Content
-		[Object[]]$Categories = $Categories.API.response.operation.Details.record
-        #Insert ID/Name pairs
-
-        Foreach ($record in $Categories)
-        {
-            $CategoryHash.Add($record.parameter.value[0], @{$record.parameter.value[1] = $record.parameter.value[0]})
-            $CategoryHash[$record.parameter.value[0]].Add('Subcategories', @{})
-        }
+		$Categories = [xml](Invoke-WebRequest -Method Post -Uri $ModuleURL -Body $Params).Content
+		$Categories = $Categories.API.response.operation.Details.record
         
-	
-		Foreach ($CatKey in $CategoryHash.Keys)
-		{
-			#Insert Subcategories into the Category hashtable keyed on the parent Category ID
-            $CategoryHash[$CatKey]['Subcategories'] = $(Get-MESubcategories -CatKey $CatKey)
-		}
+        #Insert ID/Name pairs
+        Foreach ($Cat in $Categories)
+        {
+            $CategoryHash.Add($Cat.parameter.value[0], @{$Cat.parameter.value[1] = $Cat.parameter.value[0]})
+            $CategoryHash[$Cat.parameter.value[0]].Add('Subcategories', (Get-MESubcategories -CatKey $Cat.parameter.value[0]))
+        }
 	}
 	else
 	{
@@ -69,7 +65,7 @@ function Get-MESubcategories
 		Foreach ($SubCat in $Subcategories)
         {
             $SubCategoryHash.Add($SubCat.parameter.value[0], @{$SubCat.parameter.value[1] = $SubCat.parameter.value[0]})
-            $SubCategoryHash[$SubCat.parameter.value[0]].Add('Items', (Get-MEItems -SubCatKey $SubCat))
+            $SubCategoryHash[$SubCat.parameter.value[0]].Add('Items', (Get-MEItems -SubCatKey $SubCat.parameter.value[0]))
         }
 	}
 	
@@ -278,4 +274,3 @@ function New-METicket
 	$ModuleURL = ''
 }
 
-Get-MECategories
