@@ -24,18 +24,18 @@ $RequestFilterHash = @{}
 function Get-MECategories
 {
 	If ($CategoryHash.Count -eq 0)
-	{  	
+	{		
 		$ModuleURL = $MEBaseURL + "admin/category/"
 		$Params = @{OPERATION_NAME='GET_ALL';TECHNICIAN_KEY=$MEAPIKey}
 		$Categories = [xml](Invoke-WebRequest -Method Post -Uri $ModuleURL -Body $Params).Content
 		$Categories = $Categories.API.response.operation.Details.record
-        
-        #Insert ID/Name pairs
-        Foreach ($Cat in $Categories)
-        {
-            $CategoryHash.Add($Cat.parameter.value[0], @{$Cat.parameter.value[1] = $Cat.parameter.value[0]})
-            $CategoryHash[$Cat.parameter.value[0]].Add('Subcategories', (Get-MESubcategories -CatKey $Cat.parameter.value[0]))
-        }
+	
+	    #Insert ID/Name pairs
+	    Foreach ($Cat in $Categories)
+	    {
+	        $CategoryHash.Add($Cat.parameter.value[0], @{$Cat.parameter.value[1] = $Cat.parameter.value[0]})
+	        $CategoryHash[$Cat.parameter.value[0]].Add('Subcategories', (Get-MESubcategories -CatKey $Cat.parameter.value[0]))
+	    }
 	}
 	else
 	{
@@ -60,13 +60,14 @@ function Get-MESubcategories
 	$Subcategories = $Subcategories.API.response.operation.Details.record
 
 	$SubCategoryHash = @{}
-	If ($Subcategories -ne $null)
+	
+    If ($Subcategories -ne $null)
 	{
 		Foreach ($SubCat in $Subcategories)
-        {
-            $SubCategoryHash.Add($SubCat.parameter.value[0], @{$SubCat.parameter.value[1] = $SubCat.parameter.value[0]})
-            $SubCategoryHash[$SubCat.parameter.value[0]].Add('Items', (Get-MEItems -SubCatKey $SubCat.parameter.value[0]))
-        }
+	    {
+	        $SubCategoryHash.Add($SubCat.parameter.value[0], @{$SubCat.parameter.value[1] = $SubCat.parameter.value[0]})
+	        $SubCategoryHash[$SubCat.parameter.value[0]].Add('Items', (Get-MEItems -SubCatKey $SubCat.parameter.value[0]))
+	    }
 	}
 	
 	return $SubCategoryHash
@@ -85,7 +86,8 @@ function Get-MEItems
 	$Items = $Items.API.response.operation.Details.record
 	
 	$ItemHash = @{}
-	If ($Items -ne $null)
+	
+    If ($Items -ne $null)
 	{
 		$Items | Foreach {$ItemHash[$_.parameter.value[0]] = $_.parameter.value[1]}
 	}
@@ -173,9 +175,9 @@ function Get-MESupportGroups
 	$SupportGroupXML = @"
 	<?xml version="1.0" encoding="UTF-8"?>
 	<operation name="GET_ALL">
-	    <Details>
-	        <siteName></siteName>
-	    </Details>
+		<Details>
+		<siteName></siteName>
+		</Details>
 	</operation>
 "@
 	$ModuleURL = $MEBaseURL + "admin/supportgroup/"
@@ -213,18 +215,18 @@ function Get-MERequests
 
 	$GetReqsXML = @"
 	<Details>
-	    <parameter>
-	        <name>from</name>
-	        <value>$LowerLimit</value>
-	    </parameter>
-	    <parameter>
-	        <name>limit</name>
-	        <value>$UpperLimit</value>
-	    </parameter>
-	    <parameter>
-	        <name>filterby</name>
-	        <value>$RequestFilter</value>
-	    </parameter>
+		<parameter>
+		<name>from</name>
+		<value>$LowerLimit</value>
+		</parameter>
+		<parameter>
+		<name>limit</name>
+		<value>$UpperLimit</value>
+		</parameter>
+		<parameter>
+		<name>filterby</name>
+		<value>$RequestFilter</value>
+		</parameter>
 	</Details>
 "@
 
@@ -256,16 +258,16 @@ function New-METicket
 
 	$NewTicketXML = @"
 	<Operation>
-	    <Details>
-	        <requester>$Requester</requester>
-	        <subject>$Subject</subject>
-	        <description>$Description</description>
-	        <requesttemplate>Default Request</requesttemplate>
-	        <group>$Group</group>
-	        <priority>$Priority</priority>
-	        <status>$Status</status>
-	        <service>$Service</service>
-	    </Details>
+		<Details>
+		<requester>$Requester</requester>
+		<subject>$Subject</subject>
+		<description>$Description</description>
+		<requesttemplate>Default Request</requesttemplate>
+		<group>$Group</group>
+		<priority>$Priority</priority>
+		<status>$Status</status>
+		<service>$Service</service>
+		</Details>
 	</Operation>
 "@
 	$ModuleURL = $MEBaseURL + "request/"
